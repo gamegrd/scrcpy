@@ -12,6 +12,68 @@
 
 #ifdef _WIN32
 
+char WorkDir[0x200] = "x" ;
+void ExtractFilePath(char *FullPath)
+{
+	if (!FullPath)
+		return;
+	char *_filename = strrchr(FullPath, '\\');
+	if (!_filename)
+		return;
+	if (strlen(_filename) > 1)
+	{
+		_filename[1] = '\0';
+	}
+
+}
+void InitFunctionModule(void* hModule)
+{
+	if ( strlen(WorkDir) < 2 ){
+		GetModuleFileNameA((HMODULE)hModule, WorkDir, sizeof(WorkDir));
+	}
+	ExtractFilePath(WorkDir);
+}
+typedef bool(*pSetInterface)(void* Interface);
+void LoadPlugins(char* plugin_path, void* pData)
+{
+	auto module = LoadLibrary( plugin_path );
+	pSetInterface f = (pSetInterface)GetProcAddress(module, "SetInterface");
+	if (f)
+	{
+		f(pData);
+	}
+}
+
+DWORD IterFiles()
+{
+	DWORD dwStatus = 0;
+
+	WIN32_FIND_DATA findFileData;
+	char filePath[] = "*.plugin";
+	
+	HANDLE hFind = FindFirstFile(filePath, &findFileData);
+	if (hFind != INVALID_HANDLE_VALUE)
+	{
+		do
+		{
+			if (strcmp(findFileData.cFileName, ".") == 0 || strcmp(findFileData.cFileName, "..") == 0)
+			{
+				continue;
+			}
+			else
+			{
+				LoadPlugins(findFileData.cFileName,NULL);
+			}
+			if (dwStatus != 0)
+			{
+				break;
+			}
+		} while (FindNextFile(hFind, &findFileData));
+	}
+
+	return dwStatus;
+}
+
 #define WM_PLUGIN_BASE WM_USER 
 void on_window_message(void *userdata, void *hWnd, unsigned int message, Uint64 wParam, int64_t lParam){
     (void)(userdata);
@@ -45,5 +107,7 @@ void on_window_message(void *userdata, void *hWnd, unsigned int message, Uint64 
 void plugin_init(){
 #ifdef _WIN32
     SDL_SetWindowsMessageHook(on_window_message,NULL);
+    InitFunctionModule(GetModuleHandleA(NULL));
+    IterFiles( WorkDir );
 #endif
 }
