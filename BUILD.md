@@ -3,6 +3,7 @@
 Here are the instructions to build _scrcpy_ (client and server).
 
 meson x  --prefix /usr  --buildtype release  --strip  -Db_lto=true  -Dc_link_args=-lcrypto  --cross-file cross.txt
+meson x  --prefix /usr  --buildtype debug --strip  -Db_lto=true  -Dc_link_args=-lcrypto  --cross-file cross.txt
 
 
 

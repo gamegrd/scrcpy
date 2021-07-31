@@ -115,7 +115,6 @@ sdl_init_and_configure(bool display, const char *render_driver,
         SDL_EnableScreenSaver();
     }
 
-    plugin_init();
     return true;
 }
 
@@ -358,7 +357,7 @@ scrcpy(const struct scrcpy_options *options) {
         }
 
         const char *window_title =
-            options->window_title ? options->window_title : device_name;
+            options->window_title ? options->window_title : s->server.serial ;
 
         struct screen_params screen_params = {
             .window_title = window_title,
@@ -404,6 +403,7 @@ scrcpy(const struct scrcpy_options *options) {
     }
 #endif
 
+    plugin_init( s );
     // now we consumed the header values, the socket receives the video stream
     // start the stream
     if (!stream_start(&s->stream)) {

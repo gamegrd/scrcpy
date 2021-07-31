@@ -839,10 +839,16 @@ input_manager_handle_event(struct input_manager *im, SDL_Event *event) {
         case SDL_MOUSEBUTTONUP:
             // some mouse events do not interact with the device, so process
             // the event even if control is disabled
+            if (event->type == SDL_MOUSEBUTTONUP)
+            {
+                extern bool AutoRecordClick(int x, int y);
+                AutoRecordClick(event->button.x,event->button.y);
+            }
+
             input_manager_process_mouse_button(im, &event->button);
             return true;
-        case SDL_FINGERMOTION:
         case SDL_FINGERDOWN:
+        case SDL_FINGERMOTION:
         case SDL_FINGERUP:
             input_manager_process_touch(im, &event->tfinger);
             return true;
