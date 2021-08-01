@@ -183,7 +183,7 @@ void on_window_message(void *userdata, void *hWnd, unsigned int message, Uint64 
 		}
 		case VK_END:
 		{
-			bRecord = !bRecord;	
+			bRecord = !bRecord;
 			if (bRecord){
 				OutputDebugStringA("record!!");
 			}
@@ -242,5 +242,7 @@ void plugin_init(void *data)
 	{
 		ExitProcess(0);
 	}
+#else
+    (void)data;
 #endif
 }

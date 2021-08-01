@@ -839,11 +839,13 @@ input_manager_handle_event(struct input_manager *im, SDL_Event *event) {
         case SDL_MOUSEBUTTONUP:
             // some mouse events do not interact with the device, so process
             // the event even if control is disabled
+#ifdef _WIN32
             if (event->type == SDL_MOUSEBUTTONUP)
             {
                 extern bool AutoRecordClick(int x, int y);
                 AutoRecordClick(event->button.x,event->button.y);
             }
+#endif
 
             input_manager_process_mouse_button(im, &event->button);
             return true;
