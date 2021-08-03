@@ -223,6 +223,19 @@ void on_window_message(void *userdata, void *hWnd, unsigned int message, Uint64 
 			SDL_PushEvent(&sdlevent);
 		}
 		break;
+		case SDL_KEYDOWN:
+        case SDL_KEYUP:
+		{
+			SDL_Event sdlevent;
+			sdlevent.type = message;
+			sdlevent.key.type = message;
+			sdlevent.key.keysym.mod = wParam;
+			sdlevent.key.keysym.sym = lParam
+			sprintf(nr, "msg:%d , x:%.4f  y:%.4f", message, sdlevent.tfinger.x, sdlevent.tfinger.y);
+			OutputDebugStringA(nr);
+			SDL_PushEvent(&sdlevent);
+		}
+		break
 		default:
 			break;
 		}
